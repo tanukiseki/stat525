@@ -20,10 +20,12 @@ To obtain the Monte Carlo estimation of $E(e^{X^2})$, we need to draw i.i.d. sam
 ```{r}
 n <- 1000
 x <- runif(n)
-mu <- mean(exp(x^2))
+ex <- exp(x^2)
+mu <- mean(ex)
+se <- sd(ex)/sqrt(n)
 ```
 
-The Monte Carlo estimate of $E(e^{X^2})$ is `r mu`.
+The Monte Carlo estimate of $E(e^{X^2})$ is `r mu`, and the standard error of the estimate is `r se`.
 
 ## Question 2
 
