@@ -1,0 +1,18 @@
+---
+title: "Homework 1"
+author: "Yiran Liu"
+date: "1/29/2020"
+output:
+  pdf_document:
+    latex_engine: xelatex
+mainfont: Georgia
+monofont: Sarasa Term CL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+To obtain the Monte Carlo estimation of $E(e^{X^2})$, we need to generate 
