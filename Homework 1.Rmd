@@ -1,6 +1,6 @@
 ---
 title: "Homework 1"
-author: "Yiran Liu"
+author: "Yiran Liu (netID: yiranl7)"
 date: "1/29/2020"
 output:
   pdf_document:
@@ -59,25 +59,26 @@ F(x) =
 1 & x>2 \\
 \end{cases}
 $$
-Draw i.i.d. samples from $U(0,1)$ and then plug into the $F(x)$ to get the desired sample. Codes and results:
+And the inverse of $F(x)$ is
+$$
+F^{-1}(x) = 
+\begin{cases}
+\sqrt{2x} & 0\leq x \leq \frac{1}{2} \\
+2-\sqrt{2-2x} & \frac{1}{2}<x\leq1\\
+\end{cases}
+$$
+
+Draw i.i.d. samples from $U(0,1)$ and then plug into $F^{-1}(x)$ to get the desired sample. Codes and results:
 
 ```{r}
 n <- 10
 cdf <- function(x) {
-  if (x < 0) {
-    return(0)
+  if (x >= 0 && x <= 0.5) {
+    return(sqrt(2*x))
   }
   
-  if (x >= 0 && x <= 1) {
-    return(0.5 * x^2)
-  }
-  
-  if (x > 1 && x <= 2) {
-    return(-0.5 * x^2 + 2 * x - 1)
-  }
-  
-  if (x > 2) {
-    return(1)
+  if (x > 0.5 && x <= 1) {
+    return(2 - sqrt(2 - 2*x))
   }
   
 }
