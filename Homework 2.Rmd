@@ -1,0 +1,39 @@
+---
+title: "Homework 2"
+author: "Yiran Liu (netID: yiranl7)"
+date: "2/3/2020"
+output:
+  pdf_document:
+    latex_engine: xelatex
+mainfont: Georgia
+monofont: Sarasa Term CL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+```{r}
+pi <- function(x) {
+  3/2 * x^3 + 11/8 * x^2 + 1/6 * x + 1/12
+}
+
+n <- 1000
+
+c <- 3/2 + 11/8 + 1/6 + 1/12
+rn <- vector(mode = "numeric", length = n)
+time <- 0
+for (count in 0:n) {
+  x <- runif(1)
+  u <- runif(1)
+  if (u < c * pi(x)) {
+    count+1
+    time <- time + 1
+    rn[count] <- x
+  } else {
+    time <- time + 1
+  }
+}
+```
