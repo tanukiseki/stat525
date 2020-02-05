@@ -15,8 +15,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Question 1
 
+Let $c=\frac{24}{75}$ and $g(x)=1, 0\leq x \leq 1$, and we have $\frac{\pi(x)}{g(x)}\leq c$.
+
 ```{r}
-pi <- function(x) {
+p <- function(x) {
   3/2 * x^3 + 11/8 * x^2 + 1/6 * x + 1/12
 }
 
@@ -25,13 +27,91 @@ n <- 1000
 c <- 3/2 + 11/8 + 1/6 + 1/12
 rn <- vector(mode = "numeric", length = n)
 time <- 0
-for (count in 0:n) {
+count <- 1
+while (count < n) {
   x <- runif(1)
   u <- runif(1)
-  if (u < c * pi(x)) {
-    count+1
-    time <- time + 1
+  if (u < p(x) / c) {
     rn[count] <- x
+    count <- count + 1
+    time <- time + 1
+  } else {
+    time <- time + 1
+  }
+}
+```
+
+## Question 2
+
+Let $c=4$ and $g(x)=e^{-x}$, and we have $\frac{\pi(x)}{g(x)}\leq c$.
+
+```{r}
+l <- function(x) {
+  ((sin(8 * x)^2) + 2 * (cos(3 * x)^4) + 1) * exp(-x)  
+}
+
+n <- 1000
+
+c <- 4
+
+rn <- vector(mode = "numeric", length = n)
+count <- 1
+time <- 0
+while (count < n) {
+  x <- rexp(1)
+  u <- runif(1)
+  if (u < l(x) / (c * exp(-x))) {
+    rn[count] <- x
+    count <- count + 1
+    time <- time + 1
+  } else {
+    time <- time + 1
+  }
+}
+```
+
+## Question 3
+
+By plugging in $x_1, x_2, x_3, x_4, x_5$ we have
+$$
+\pi(\theta | x_1, x_2,..., x_5) = \frac{1}{(\sqrt{2\pi})^5\pi (1 + \theta^2)}e^{-\frac{5(\theta - 0.68)^2+2.948}{2}}
+$$
+
+Let $g(\theta) = \frac{1}{\sqrt{2\pi}}e^-\frac{(\theta-0.68)^2}{2\times 1/5}$ and $c=\frac{1}{4\pi^3}$, then $\frac{\pi(x)}{g(x)}\leq c$.
+
+```{r}
+l <- function(x) {
+  1/(pi * (1 + x^2)) * 1/(sqrt(2 * pi))^5 * exp(-5 * (x - 0.68)^2 - 2.948)
+}
+
+n <- 1000
+
+c <- 1/(4 * pi)^3
+
+rn <- vector(mode = "numeric", length = n)
+time <- 0
+count = 1
+while (count < n) {
+  x <- rnorm(1, 0.68, sqrt(1/5))
+  u <- runif(1)
+  if (u < l(x) / (c * dnorm(x, 0.68, sqrt(1/5)))) {
+    rn[count] <- x
+    count <- count + 1 
+    time <- time + 1
+  } else {
+    time <- time + 1
+  }
+}
+
+
+c <- 1/(sqrt(2 * pi))^5
+while (count < n) {
+  x <- rcauchy(1)
+  u <- runif(1)
+  if (u < l(x) / (c * dcauchy(x))) {
+    rn[count] <- x
+    count <- count + 1 
+    time <- time + 1
   } else {
     time <- time + 1
   }
