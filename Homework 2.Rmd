@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Question 1
 
-Let $c=\frac{24}{75}$ and $g(x)=1, 0\leq x \leq 1$, and we have $\frac{\pi(x)}{g(x)}\leq c$.
+Let $c=\frac{24}{75}$ and $g(x)=1, 0\leq x \leq 1$, and we have $\frac{\pi(x)}{g(x)}\leq c$. In the $i$-th iteration, we draw $x_i$ from $g(x)$ and $u_i$ from $U(0,1)$. If $u<\frac{\pi(x_i)}{cg(x_i)}=\frac{24\pi(x_i)}{75}$, then $x_i$ is accepted as a sample point. Repeat until we get a sample which is of 1000 sample size. Codes and results:
 
 ```{r}
 p <- function(x) {
@@ -28,7 +28,7 @@ c <- 3/2 + 11/8 + 1/6 + 1/12
 rn <- vector(mode = "numeric", length = n)
 time <- 0
 count <- 1
-while (count < n) {
+while (count <= n) {
   x <- runif(1)
   u <- runif(1)
   if (u < p(x) / c) {
@@ -39,11 +39,16 @@ while (count < n) {
     time <- time + 1
   }
 }
+
+est <- mean(rn^2)
+se <- sd(rn)/sqrt(n)
 ```
+
+The estimate of $E(X^2)$ is `r est`, and its standard error is `r se`.
 
 ## Question 2
 
-Let $c=4$ and $g(x)=e^{-x}$, and we have $\frac{\pi(x)}{g(x)}\leq c$.
+Denote $l(x)=\{[\sin(8x)]^2+2[cos(3x)]^4+1\}e^{-x}$. Let $c=4$ and $g(x)=e^{-x}$, and we have $\frac{l(x)}{g(x)}\leq c$. In the $i$-th iteration, we draw $x_i$ from $g(x)$ and $u_i$ from $U(0,1)$. If $u<\frac{l(x_i)}{cg(x_i)}$, then $x_i$ is accepted as a sample point. Repeat until we get a sample which is of 1000 sample size. Codes and results:
 
 ```{r}
 l <- function(x) {
@@ -57,7 +62,7 @@ c <- 4
 rn <- vector(mode = "numeric", length = n)
 count <- 1
 time <- 0
-while (count < n) {
+while (count <= n) {
   x <- rexp(1)
   u <- runif(1)
   if (u < l(x) / (c * exp(-x))) {
@@ -68,7 +73,12 @@ while (count < n) {
     time <- time + 1
   }
 }
+
+est <- mean(rn)
+se <- sd(rn)/sqrt(n)
 ```
+
+The estimate of the mean of $\pi(x)$ is `r est`, and its standard error is `r se`.
 
 ## Question 3
 
@@ -77,7 +87,7 @@ $$
 \pi(\theta | x_1, x_2,..., x_5) = \frac{1}{(\sqrt{2\pi})^5\pi (1 + \theta^2)}e^{-\frac{5(\theta - 0.68)^2+2.948}{2}}
 $$
 
-Let $g(\theta) = \frac{1}{\sqrt{2\pi}}e^-\frac{(\theta-0.68)^2}{2\times 1/5}$ and $c=\frac{1}{4\pi^3}$, then $\frac{\pi(x)}{g(x)}\leq c$.
+Let $g(\theta) = \frac{1}{\sqrt{2\pi\times1/5}}e^-\frac{(\theta-0.68)^2}{2\times 1/5}$ (the intrumental distribution) and $c=\frac{1}{4\pi^3}$, then $\frac{\pi(\theta)}{g(\theta)}\leq c$. In the $i$-th iteration, we draw $\theta_i$ from $g(\theta)$ and $u_i$ from $U(0,1)$. If $u<\frac{\pi(\theta_i|x_1,...,x_5)}{cg(\theta_i)}$, then $\theta_i$ is accepted as a sample point. Repeat until we get a sample which is of 1000 sample size. Codes and results:
 
 ```{r}
 l <- function(x) {
@@ -90,8 +100,8 @@ c <- 1/(4 * pi)^3
 
 rn <- vector(mode = "numeric", length = n)
 time <- 0
-count = 1
-while (count < n) {
+count <- 1
+while (count <= n) {
   x <- rnorm(1, 0.68, sqrt(1/5))
   u <- runif(1)
   if (u < l(x) / (c * dnorm(x, 0.68, sqrt(1/5)))) {
@@ -103,17 +113,9 @@ while (count < n) {
   }
 }
 
-
-c <- 1/(sqrt(2 * pi))^5
-while (count < n) {
-  x <- rcauchy(1)
-  u <- runif(1)
-  if (u < l(x) / (c * dcauchy(x))) {
-    rn[count] <- x
-    count <- count + 1 
-    time <- time + 1
-  } else {
-    time <- time + 1
-  }
-}
+rate <- count/time
+est <- mean(rn^2)
+se <- sd(rn)/sqrt(n)
 ```
+
+There are $N=$ `r time` samples generated to get 1000 accepted samples. The acceptance rate is `r rate`. The estimate of the mean of $\pi(\theta|x_1,...,x_5)$ is `r est`, and its standard error is `r se`.
