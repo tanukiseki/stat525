@@ -1,0 +1,40 @@
+---
+title: "Homework 3"
+author: "Yiran Liu (netID: yiranl7)"
+date: "2/10/2020"
+output:
+  pdf_document:
+    latex_engine: xelatex
+mainfont: Georgia
+monofont: Sarasa Term CL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+In this question, $h(x) = \sin(\sqrt{x})$ and $\pi(x)=I_{[0,1]}(x)$. We intend to use $Beta(\frac{3}{2},1)$ as the proposal distribution. In comparison, we also apply the native Monte Carlo method to estimate $\mu$. Codes and results:
+
+```{r}
+h <- function(x) {
+  sin(sqrt(x))
+}
+
+n <- 1000
+## importance sampling
+x1 <- rbeta(n, 1.5, 1)
+w <- 1/dbeta(x1, 1.5, 1)
+mu <- mean(w*h(x1))
+## direct monte carlo
+x2 <- runif(n)
+mu2 <- mean(sin(sqrt(x2)))
+se1 <- sd(w*h(x1))/sqrt(1000)
+se2 <- sd(x2)/sqrt(1000)
+```
+
+The result shows that by applying importance sampling, the standard error reduced from `r se2` (by native Monte Carlo method) to `r se1`.
+
+## Question 2
+
