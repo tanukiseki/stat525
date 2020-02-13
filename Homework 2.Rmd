@@ -41,7 +41,7 @@ while (count <= n) {
 }
 
 est <- mean(rn^2)
-se <- sd(rn)/sqrt(n)
+se <- sd(rn^2)/sqrt(n)
 ```
 
 The estimate of $E(X^2)$ is `r est`, and its standard error is `r se`.
@@ -87,16 +87,16 @@ $$
 \pi(\theta | x_1, x_2,..., x_5) = \frac{1}{(\sqrt{2\pi})^5\pi (1 + \theta^2)}e^{-\frac{5(\theta - 0.68)^2+2.948}{2}}
 $$
 
-Let $g(\theta) = \frac{1}{\sqrt{2\pi\times1/5}}e^-\frac{(\theta-0.68)^2}{2\times 1/5}$ (the intrumental distribution) and $c=\frac{1}{4\pi^3}$, then $\frac{\pi(\theta)}{g(\theta)}\leq c$. In the $i$-th iteration, we draw $\theta_i$ from $g(\theta)$ and $u_i$ from $U(0,1)$. If $u<\frac{\pi(\theta_i|x_1,...,x_5)}{cg(\theta_i)}$, then $\theta_i$ is accepted as a sample point. Repeat until we get a sample which is of 1000 sample size. Codes and results:
+Let $g(\theta) = \frac{1}{\sqrt{2\pi\times1/5}}e^-\frac{(\theta-0.68)^2}{2\times 1/5}$ (the intrumental distribution) and $c=\frac{e^{-1.474}}{4\sqrt{5}\pi^3}$, then $\frac{\pi(\theta)}{g(\theta)}\leq c$. In the $i$-th iteration, we draw $\theta_i$ from $g(\theta)$ and $u_i$ from $U(0,1)$. If $u<\frac{\pi(\theta_i|x_1,...,x_5)}{cg(\theta_i)}$, then $\theta_i$ is accepted as a sample point. Repeat until we get a sample which is of 1000 sample size. Codes and results:
 
 ```{r}
 l <- function(x) {
-  1/(pi * (1 + x^2)) * 1/(sqrt(2 * pi))^5 * exp(-5 * (x - 0.68)^2 - 2.948)
+  1/(pi * (1 + x^2)) * 1/(sqrt(2 * pi))^5 * exp((-5 * (x - 0.68)^2 - 2.948)/2)
 }
 
 n <- 1000
 
-c <- 1/(4 * pi)^3
+c <- 1/(4 * pi^3 * sqrt(5)) * exp(-2.948/2)
 
 rn <- vector(mode = "numeric", length = n)
 time <- 0
@@ -114,7 +114,7 @@ while (count <= n) {
 }
 
 rate <- count/time
-est <- mean(rn^2)
+est <- mean(rn)
 se <- sd(rn)/sqrt(n)
 ```
 

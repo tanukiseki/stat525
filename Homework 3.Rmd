@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Question 1
 
-In this question, $h(x) = \sin(\sqrt{x})$ and $\pi(x)=I_{[0,1]}(x)$. We intend to use $Beta(\frac{3}{2},1)$ as the proposal distribution. In comparison, we also apply the native Monte Carlo method to estimate $\mu$. Codes and results:
+In this question, $h(x) = \sin(\sqrt{x})$ and $\pi(x)=I_{[0,1]}(x)$. We intend to use $Beta(\frac{3}{2},1)$ as the proposal distribution. We first generate 1000 samples from $g(x)$, then calculate $w_i=\pi(x_i)/g(x_i)$. Then $\hat{\mu}=\frac{1}{n}\sum_i^nw_ih_i(x)$. In comparison, we also apply the native Monte Carlo method to estimate $\mu$. Codes and results:
 
 ```{r}
 h <- function(x) {
@@ -25,7 +25,7 @@ h <- function(x) {
 n <- 1000
 ## importance sampling
 x1 <- rbeta(n, 1.5, 1)
-w <- 1/dbeta(x1, 1.5, 1)
+w <- ifelse(x1>=0 & x1<=1, 1, 0)/dbeta(x1, 1.5, 1)
 mu <- mean(w*h(x1))
 ## direct monte carlo
 x2 <- runif(n)
@@ -38,7 +38,7 @@ The result shows that by applying importance sampling, the standard error reduce
 
 ## Question 2
 
-In HW2, the sample size to generate 1000 accepted samples was $N =1507$. For this question, we use normal distribution $N(0.68, 1)$ as the proposal distribution. Codes and results:
+In HW2, the sample size to generate 1000 accepted samples was $N =1507$. For this question, we use normal distribution $N(0.68, 1)$ as the proposal distribution. Denote $\pi(\theta | x_1, x_2,..., x_5)\propto l(x) = \frac{1}{(\sqrt{2\pi})^5\pi (1 + \theta^2)}e^{-\frac{5(\theta - 0.68)^2+2.948}{2}}$. We first generate $N$ samples from $g(x)$, then calculate $w_i=l(x_i)/g(x_i)$. Then $\hat{\mu}=\frac{\sum_i^nw_ih_i(x)}{\sum_n^i w_i}$. The standard error is calculated by $\hat{SE}=\sqrt{\frac{\hat{Var}(\frac{h(X)l(X)}{g(X)}) + \hat{\mu}^2\hat{Var}(l(X)/g(X)) - 2\mu \hat{Cov}(h(X)l(X)/g(X), l(X)/g(X))}{n(\hat{E}(l(X)/g(X)))^2}}$. Codes and results:
 
 ```{r}
 l <- function(x) {
@@ -55,7 +55,7 @@ The estimate of mean of $\pi(x)$ is `r mu` and the standard error is `r se`.
 
 ## Question 3
 
-Use standard normal distribution as the proposal distribution. Codes and results:
+Use standard normal distribution as the proposal distribution $g(x)$. Denote $l(x) = \exp(-\frac{1}{2}x^8)$. We first generate 1000 samples from $g(x)$, then calculate $w_i=l(x_i)/g(x_i)$. Then $\hat{\mu}=\frac{\sum_i^nw_ih_i(x)}{\sum_n^i w_i}$. The standard error is calculated by $\hat{SE}=\sqrt{\frac{\hat{Var}(\frac{h(X)l(X)}{g(X)}) + \hat{\mu}^2\hat{Var}(l(X)/g(X)) - 2\mu \hat{Cov}(h(X)l(X)/g(X), l(X)/g(X))}{n(\hat{E}(l(X)/g(X)))^2}}$. Codes and results: Codes and results:
 
 ```{r}
 n <- 1000
