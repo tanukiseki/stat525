@@ -38,3 +38,31 @@ The result shows that by applying importance sampling, the standard error reduce
 
 ## Question 2
 
+In HW2, the sample size to generate 1000 accepted samples was $N =1507$. For this question, we use normal distribution $N(0.68, 1)$ as the proposal distribution. Codes and results:
+
+```{r}
+l <- function(x) {
+  1/(pi * (1 + x^2)) * 1/(sqrt(2 * pi))^5 * exp((-5 * (x - 0.68)^2 - 2.948)/2)
+}
+n <- 1507
+x <- rnorm(n)
+w <- l(x) / dnorm(x)
+mu <- sum(w*x)/sum(w)
+se <- sqrt((var(w * x) + mu^2 * var(w) - 2 * mu * cov(w, w*x)) / (n * (mean(w))^2))
+```
+
+The estimate of mean of $\pi(x)$ is `r mu` and the standard error is `r se`.
+
+## Question 3
+
+Use standard normal distribution as the proposal distribution. Codes and results:
+
+```{r}
+n <- 1000
+x <- rnorm(n, 0, 1)
+w <- exp(-0.5 * x^8) / dnorm(x, 0, 1)
+mu <- sum(w*(x^2))/sum(w)
+se <- sqrt((var(w * x^2) + mu^2 * var(w) - 2 * mu * cov(w, w*x^2)) / (n * (mean(w))^2))
+```
+
+The estimate is `r mu` and the standard error is `r se`.
