@@ -13,3 +13,83 @@ monofont: Sarasa Term CL
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Question 1 & Question 2
+
+Question 1 and Question 2 are essentially sovled with the same methods.
+```{r}
+# Generating SAWs by one step look ahead method
+d <- 11
+
+saw <- list()
+move_list <- list(c(0, 1), c(0, -1), c(-1, 0), c(1, 0))
+
+for (epoch in 1:2000) {
+  x <- 0
+  y <- 0
+  x_visited <- c(0)
+  y_visited <- c(0)
+  n <- c(0)
+  t <- 0
+  for (t in 1:d) {
+    flag <- rep(1, 4)
+    for (i in 1:length(x_visited)) {
+      # if above available
+      if (x == x_visited[i] && (y + 1) == y_visited[i]) {
+        flag[1] <- 0
+      }
+      # if down available
+      if (x == x_visited[i] && y - 1 == y_visited[i]) {
+        flag[2] <- 0
+      }
+      # if left available
+      if (x - 1 == x_visited[i] && y == y_visited[i]) {
+        flag[3] <- 0
+      }
+      # if right available
+      if (x + 1 == x_visited[i] && y == y_visited[[i]]) {
+        flag[4] <- 0
+      }
+    }
+    
+    n[t] <- sum(flag)
+    if (n[t] == 0) {
+      break
+    } else {
+      full_pos <- which(flag == 0)
+      if (length(full_pos) == 0) {
+        move <- unlist(sample(move_list, 1))
+        x <- x + move[1]
+        y <- y + move[2]
+        x_visited[t + 1] <- x
+        y_visited[t + 1] <- y
+      } else {
+        move <- unlist(sample(move_list[-full_pos], 1))
+        x <- x + move[1]
+        y <- y + move[2]
+        x_visited[t + 1] <- x
+        y_visited[t + 1] <- y
+      }
+    }
+  }
+  
+  saw[[epoch]] <- list(x_visited, y_visited, n)
+}
+w <- sapply(saw, FUN = function(saw) prod(saw[[3]]))
+end <- lapply(saw, FUN = function(saw) c(saw[[1]][12], saw[[2]][12]))
+ext <- sapply(end, FUN = function(end) (end[1])^2 + (end[2])^2)
+
+count <- which(!is.na(ext))
+# estimate the squared extension
+ext_est <- w[count] %*% ext[count]/sum(w[count])
+ext_se <- sqrt((var(w[count] * ext[count]) + ext_est^2 * var(w[count])
+                - 2 * ext_est * cov(w[count] * ext[count], w[count])) / 2000 * (mean(w[count]))^2)
+
+# estimate the number of 11 step SAWs
+num <- mean(w[count])
+num_se <- sqrt(var(w[count]) / 2000)
+```
+
+The estimated mean squared extension is `r ext_est` and the standard error is `r ext_se`. The estimated number of self-avoiding walks with length 11 is `r num` and the standard error is `r num_se`.
+
+## Question 3
+
