@@ -15,3 +15,63 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Question 1
 
+
+
+## Question 2
+
+* Naive Monte Carlo
+
+```{r, question2}
+x1 <- runif(1000)
+est1 <- mean(1 / (1 + x1^3))
+var1 <- var(1 / (1 + x1^3))
+```
+
+By the naive Monte Carlo, we get $\hat{\mu}$=`r est1` and its variance is `r var1`.
+
+* Control variates method
+
+```{r}
+u <- runif(1000)
+b <- cov(1 / (1 + u^3), 1 + u^3) / var(1 + u^3)
+x2 <- runif(1000)
+est2 <- mean(1 / (1 + x2^3) - b * ((1 + x2^3) - 5/4))
+var2 <- var(1 / (1 + x2^3) - b * ((1 + x2^3) - 5/4))
+```
+
+By the control variate method, we get $\hat{\mu}$=`r est2` and its variance is `r var2`, which is significantly smaller than the variance in the naive method.
+
+## Question 3
+
+The cdf of Pareto distribution is
+$$
+F(x)=\int^{x}_{2}160t^{-6}dt=1-32x^{-5},\text{  }2\leq x <\infty,
+$$
+and the inverse of $F(x)$ is
+$$
+F^{-1}(t)={(\frac{32}{1-t})}^{\frac{1}{5}}.
+$$
+
+* Naive Monte Carlo
+
+```{r, question3}
+n <- 1000
+u <- runif(n)
+x <- (32 / (1 - u))^(1/5)
+est1 <- mean(x)
+var1 <- var(x)
+```
+
+By the naive Monte Carlo, we get $\hat{\mu}$=`r est1` and its variance is `r var1`.
+
+* Antithetic variates
+
+```{r}
+u <- runif(n/2)
+x1 <- (32 / (1 - u))^(1/5)
+x2 <- (32 / u)^(1/5)
+est2 <- mean((x1 + x2)/2)
+var2 <- var((x1 + x2)/2)
+```
+
+By the antithetic variate method, we get $\hat{\mu}$=`r est2` and its variance is `r var2`, which is significantly smaller than the variance in the naive method.
