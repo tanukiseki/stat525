@@ -15,7 +15,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Question 1
 
+We would take the state equation as the proposal function.
 
+```{r, question1}
+u0 <- 0
+w0 <- 1
+Y <- c(-0.4, -1.4, 1.1, -0.3, 0.7, -0.1, 1.3, 0.3, 0.1, 1.2, 2.0, 0.9, -0.4, 0.9, 1.0)
+U <- matrix(NA, 10000, 15)
+W <- matrix(NA, 10000, 15)
+h <- rep(0, 15)
+for (m in 1:10000){
+  u <- c()
+  w <- c()
+  z <- rnorm(1)
+  u[1] <- sample(c(z, rep(u0, 9)), 1)
+  w[1] <- w0 * dnorm(Y[1], mean = u[1])
+  for (i in 2:15){
+    z <- rnorm(1)
+    u[i] <- sample(c(z, rep(u[i - 1],  9)), 1)
+    w[i] <- w[i-1] * dnorm(Y[i], mean = u[i])
+  }
+  U[m,] <- u
+  W[m,] <- w
+}
+h <- apply(U*W,2,sum) / apply(W,2,sum)
+h
+```
 
 ## Question 2
 
@@ -59,7 +84,7 @@ n <- 1000
 u <- runif(n)
 x <- (32 / (1 - u))^(1/5)
 est1 <- mean(x)
-var1 <- var(x)
+var1 <- var(x) / n
 ```
 
 By the naive Monte Carlo, we get $\hat{\mu}$=`r est1` and its variance is `r var1`.
@@ -71,7 +96,7 @@ u <- runif(n/2)
 x1 <- (32 / (1 - u))^(1/5)
 x2 <- (32 / u)^(1/5)
 est2 <- mean((x1 + x2)/2)
-var2 <- var((x1 + x2)/2)
+var2 <- (var(x1) + var(x2) + 2*cov(x1, x2))/(4*n)
 ```
 
 By the antithetic variate method, we get $\hat{\mu}$=`r est2` and its variance is `r var2`, which is significantly smaller than the variance in the naive method.
