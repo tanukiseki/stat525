@@ -1,0 +1,84 @@
+---
+title: "Homework 7.Rmd"
+author: "Yiran Liu"
+date: "2020/4/1"
+output:
+  pdf_document:
+    latex_engine: xelatex
+mainfont: Georgia
+monofont: Sarasa Term CL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+Applying systematic scan Gibbs sampling, we want to draw $x_i^{(t+1)}$ from
+
+$$
+\pi(x_i|x_1^{(t+1)},...,x_{i-1}^{(t+1)}, x_{i+1}^{(t)}, ..., x_d^{(t)}=
+\frac{\exp{[\mu (x_{i-1}^{(t+1)}+x_{i+1}^{(t)}) x_i}]}{\exp{[\mu(x_{i-1}^{(t+1)}+x_{i+1}^{(t)})]} + \exp{[-\mu}(x_{i-1}^{(t+1)}+x_{i+1}^{(t)})]}
+$$
+
+For marginal cases where $i = 1$ or $i=d$, we can simply denote $x_0^{(t+1)}=0$ and $x_d^{(t)}=0$. Codes and result:
+
+```{r Question 1}
+n <- 10000
+mu <- 2
+d <- 18
+x <- matrix(NA, nrow = d, ncol = n)
+x[, 1] <- sample(c(1, -1), size = d, replace = TRUE)
+for(t in 2:n) {
+  for (i in 1:d) {
+    u <- runif(1)
+    if (i == 1) {
+      p <- exp(mu * x[2, t-1]) / (exp(mu * x[2, t-1]) + exp(-mu * x[2, t-1]))
+      x[i, t] <- ifelse(u <= p, 1, -1)
+    } else if (i == d) {
+      p <- exp(mu * x[d-1, t]) / (exp(mu * x[d-1, t]) + exp(-mu * x[d-1, t]))
+      x[i, t] <- ifelse(u <= p, 1, -1)
+    } else {
+      p <- exp(mu * (x[i-1, t] + x[i+1, t-1])) / (exp(mu * (x[i-1, t] + x[i+1, t-1])) + exp(-mu * x[i-1, t] + x[i+1, t-1]))
+      x[i, t] <- ifelse(u <= p, 1, -1)
+    }
+  }
+}
+
+M <- apply(x[, 3001:n], 2, sum)
+hist(M, xlab = "M(t)", main = "Histogram")
+
+```
+
+## Question 2
+
+First we want to get the marginal distribution of $\mu$ and $\tau$.
+
+$$
+\pi(\mu|\tau, y) \propto \pi(\mu, \tau|y)\propto \exp{\{-\frac{1}{2\frac{1}{n\tau+\omega}} (\mu - \frac{\tau\sum^n_i y_i}{n\tau + \omega})^2\}} \sim N(\frac{\tau\sum^n_i y_i}{n\tau + \omega}, \frac{1}{n\tau+\omega})
+$$
+
+$$
+\pi(\tau|\mu, y) \propto \pi(\mu, \tau|y)\propto \tau^{n/2 + \alpha-1} \exp\{-(1/2 \sum^n_i (y_i - \mu)^2 + 1/\beta)\tau\} \sim Gamma(n/2 + \alpha, 1/2 \sum^n_i (y_i - \mu)^2 + 1/\beta)
+$$
+
+```{r Question 2}
+n <- 6
+y <- c(1.8, 3.3, 0.4, 2.5, 2.6, 2.3)
+omega <- 0.04
+alpha <- 2
+beta <- 0.5
+t <- 50000
+tau <- c()
+mu <- c()
+mu[1] <- 0
+tau[1] <- 1
+for (i in 2:t) {
+  tau[i] <- rgamma(1, alpha + n/2, 1/beta + 0.5 * sum((y - mu[i-1])^2))
+  mu[i] <- rnorm(1, tau[i-1] * n * mean(y) / (tau[i-1] * n + omega), 1 / sqrt(tau[i-1] * n + omega))
+}
+
+mean(mu[20000:t])
+mean(tau[20000:t])
+```
