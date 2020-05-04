@@ -3,10 +3,19 @@ source("project/initialization.R")
 source("project/move.R")
 # data process
 library(boot)
+library(dplyr)
 #data = coal
-
-data = c(rpois(100, 3), rpois(200, 2), rpois(200, 0.8))
-L = length(data)
+library(readr)
+data <- read_csv("project/data.csv")
+#data = round(boot::coal) %>% 
+  group_by(date) %>% 
+  count()
+day = floor(data$x) 
+L = day[length(day)]
+data = c()
+for (i in 1:L) {
+  data[i] = ifelse(i %in% day, 1, 0)
+}
 x = c(1:L)
 
 lambda = 3
@@ -46,6 +55,7 @@ for (i in 1:10000) {
   } else {
     position_change()
   }
+  
   accept[i] = a
   position_list[[i]] = s
   height_list[[i]] = h
