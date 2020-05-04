@@ -34,6 +34,7 @@ h = rgamma(k+1, alpha, beta)# length: k + 1
 position_list = list()
 height_list = list()
 k_list = c()
+accept = c()
 for (i in 1:10000) {
   u = runif(1)
   if (u <= b[k+1]) {
@@ -45,6 +46,7 @@ for (i in 1:10000) {
   } else {
     position_change()
   }
+  accept[i] = a
   position_list[[i]] = s
   height_list[[i]] = h
   k_list[i] = k
