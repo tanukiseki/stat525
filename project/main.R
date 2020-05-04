@@ -18,7 +18,23 @@ s = c(0, sort(runif(k, min = 0, max = L)), L) #length: k + 2, s[1] = 0, s[k + 2]
 h = rgamma(k+1, alpha, beta)# length: k + 1
 
 
-jump = function() {
+# jump = function() {
+#   u = runif(1)
+#   if (u <= b[k+1]) {
+#     birth()
+#   } else if (b[k+1] < u & u <= b[k+1]+d[k+1]) {
+#     death()
+#   } else if (b[k+1]+d[k+1] < u & u <= b[k+1]+d[k+1]+eta[k+1]) {
+#     height_change()
+#   } else {
+#     position_change()
+#   }
+# }
+
+position_list = list()
+height_list = list()
+k_list = c()
+for (i in 1:10000) {
   u = runif(1)
   if (u <= b[k+1]) {
     birth()
@@ -29,9 +45,7 @@ jump = function() {
   } else {
     position_change()
   }
+  position_list[[i]] = s
+  height_list[[i]] = h
+  k_list[i] = k
 }
-
-jump()
-
-s
-h

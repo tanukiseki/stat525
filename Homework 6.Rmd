@@ -14,3 +14,75 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Question 1
+
+```{r Question1}
+x <- c()
+p <- function(x) {
+  exp(-x^6-x)
+}
+
+metropolis <- function(x) {
+  y <- x + rnorm(1, sd = 2.5)
+  r <- min(1, p(y)/ (p(x)))
+  u <- runif(1)
+  return(ifelse(u <= r, y, x))
+}
+
+x[1] <- 0
+x_accepted <- c()
+for (i in 1:10000) {
+  x[i + 1] <- metropolis(x[i])
+  if (x[i + 1] != x[i]) {
+    x_accepted <- c(x_accepted, x[i + 1])
+  }
+}
+
+acf(x_accepted, lag.max = 10)
+mean(x_accepted)
+var(x_accepted) / length(x_accepted)
+```
+
+The acceptance rate is about `r length(x_accepted) / 10000`.
+
+## Question 2
+
+```{r Question2}
+table <- read.csv("C:/Users/yiran/Developer/stat525/table.csv", sep="", stringsAsFactors=FALSE)
+table <- table[-13, -13]
+
+p <- function(input) {
+  1 / prod(factorial(input))
+}
+
+metropolis <- function(table) {
+  if (runif(1) < 0.5) {
+    y <- c(1, -1, -1, 1)
+  } else {
+    y <- c(-1, 1, 1, -1)
+  }
+  cols <- sample(12, 2)
+  table_new <- table
+  table_new[cols[1], cols[1]] <- max(0, table_new[cols[1], cols[1]] + y[1])
+  table_new[cols[1], cols[2]] <- max(0, table_new[cols[1], cols[2]] + y[2])
+  table_new[cols[2], cols[1]] <- max(0, table_new[cols[2], cols[1]] + y[3])
+  table_new[cols[2], cols[2]] <- max(0, table_new[cols[2], cols[2]] + y[4])
+  r <- min(1, p(table_new) / p(table))
+  if (runif(1) <= r) {
+    return(table_new)
+  } else {
+    return(table)
+  }
+}
+
+table_list <- list()
+table_list[[1]] <- table
+p_accepted <- c()
+for (i in 1:10000) {
+  table_list[[i + 1]] <- metropolis(table_list[[i]])
+  if (p(table_list[[i + 1]]) != p(table_list[[i]])) {
+    p_accepted <- c(p_accepted, p(table_list[[i + 1]]))
+  }
+}
+mean(p_accepted)
+sqrt(var(p_accepted) / length(p_accepted))
+```

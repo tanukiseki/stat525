@@ -11,7 +11,7 @@ k_max = 10
 lambda = 3
 
 prior = dpois(c(0:k_max), lambda)
-K = length(prior)
+#K = length(prior)
 
 b = pmin(rep(1, length(prior)), c(prior[2:length(prior)], 0) / prior)
 d = pmin(rep(1, length(prior)), c(0, prior[1:k_max]) / prior)
