@@ -4,7 +4,7 @@
 
 # height change
 height_change = function() {
-	index = sample.int(k, size = 1)
+	index = sample.int(1:length(h), size = 1)
 	h_old = h[index]
 	h_new = exp(runif(1, -0.5, 0.5)) * h_old
 	y = data[which(x >= s[index] & (x < s[index + 1]))]
