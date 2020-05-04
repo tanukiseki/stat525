@@ -93,7 +93,11 @@ death = function() {
 		k <<- k - 1
 		s <<- s[-index]
 		if (index == 2) {
-			h <<- c(h_new, h[(index+1):length(h)])
+		  if (length(h) == 2) {
+		    h <<- h_new
+		  } else {
+		    h <<- c(h_new, h[(index+1):length(h)])
+		  }
 		} else if (index == length(h)) {
 			h <<- c(h[1:(index-2)], h_new)
 		} else {
