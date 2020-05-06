@@ -8,8 +8,8 @@ library(dplyr)
 library(readr)
 data <- read_csv("project/data.csv")
 #data = round(boot::coal) %>% 
-  group_by(date) %>% 
-  count()
+#group_by(date) %>% 
+#count()
 day = floor(data$x) 
 L = day[length(day)]
 data = c()
@@ -19,9 +19,9 @@ for (i in 1:L) {
 x = c(1:L)
 
 lambda = 3
-k = 5#rpois(1, lambda = lambda)
-alpha = 5
-beta = 10
+k = rpois(1, lambda = lambda)
+alpha = 2
+beta = 150
 
 s = c(0, sort(runif(k, min = 0, max = L)), L) #length: k + 2, s[1] = 0, s[k + 2] = L
 h = rgamma(k+1, alpha, beta)# length: k + 1
@@ -44,7 +44,7 @@ position_list = list()
 height_list = list()
 k_list = c()
 accept = c()
-for (i in 1:10000) {
+for (i in 1:50000) {
   u = runif(1)
   if (u <= b[k+1]) {
     birth()
