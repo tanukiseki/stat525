@@ -55,8 +55,6 @@ birth = function() {
 	temp2<-(u/(1-u))^((s_new-s[index])/(s[index+1]-s[index]))
 	h_new_1<-h[index]/temp1
 	h_new_2<-h[index]/temp2
-	#h_new_1 = exp(((s[index+1] - s[index]) / (s_new - s[index]) * log(h[index]) - (s[index+1] - s_new) / (s_new - s[index]) * log((1-u)/u)) / (s[index+1] - s[index]))
-	#h_new_2 = (1 - u) / u * h_new_1
 	likelihood_ratio = (sum(log(dpois(y_new_1, h_new_1))) + sum(log(dpois(y_new_2, h_new_2)))) - sum(log(dpois(y_old, h[index])))
 	k_prior = prior[k+2] / prior[k+1]
 	s_prior = 2 * (k + 1) * (2 * k + 3) / L^2 * (s_new - s[index]) * (s[index+1] - s_new) / (s[index+1] - s[index])

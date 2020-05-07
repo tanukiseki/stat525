@@ -7,7 +7,7 @@
 # position change: pi
 
 # prior of k
-k_max = 10
+k_max = 30
 lambda = 3
 
 prior = dpois(c(0:k_max), lambda)
